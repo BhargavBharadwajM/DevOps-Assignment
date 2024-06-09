@@ -1,0 +1,71 @@
+# Hello World Node.js App on AWS ECS/Fargate
+
+This repository contains the code and infrastructure configuration for a simple "Hello World" Node.js application deployed on AWS ECS/Fargate. The project uses Docker for containerization, Terraform for infrastructure as code, and GitHub Actions for continuous deployment.
+
+## Project Structure
+
+- `app.js` - Main application code for the Node.js app.
+- `package.json` - Node.js package configuration file.
+- `Dockerfile` - Dockerfile to containerize the Node.js application.
+- `terraform/` - Directory containing Terraform configuration files:
+  - `main.tf` - AWS provider configuration.
+  - `ecr.tf` - ECR repository configuration.
+  - `iam.tf` - IAM roles for ECS task execution.
+  - `network.tf` - VPC, subnets, and security group configuration.
+  - `ecs_cluster.tf` - ECS cluster configuration.
+  - `ecs_task_definition.tf` - ECS task definition.
+  - `ecs_service.tf` - ECS service configuration.
+- `.github/workflows/deploy.yml` - GitHub Actions workflow for continuous deployment.
+
+## Prerequisites
+
+- AWS Account with necessary permissions.
+- AWS CLI installed and configured on your local machine.
+- Terraform installed on your local machine.
+- GitHub account and repository for the project.
+
+## Setup Instructions
+
+### 1. Clone the Repository
+
+```sh
+git clone https://github.com/your-username/hello-world-nodejs-ecs.git
+cd hello-world-nodejs-ecs
+
+
+### 2. Set Up Terraform
+Navigate to the terraform/ directory and initialize Terraform.
+cd terraform
+terraform init
+
+### 3. Apply Terraform Configuration
+Apply the Terraform configuration to set up the required AWS infrastructure.
+terraform apply
+
+### 4. Dockerize the Application
+Build and push the Docker image to Amazon ECR.
+# Authenticate Docker to your ECR registry
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin <your_ecr_registry>
+
+# Build the Docker image
+docker build -t hello-world-nodejs .
+
+# Tag the Docker image
+docker tag hello-world-nodejs:latest <your_ecr_registry>/hello-world-nodejs:latest
+
+# Push the Docker image to ECR
+docker push <your_ecr_registry>/hello-world-nodejs:latest
+
+### 5. Configure GitHub Actions
+Ensure that your GitHub repository has the necessary secrets configured for AWS access:
+
+AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY
+AWS_REGION
+
+### 6. Push Code to GitHub
+Ensure your code is in the main branch or the branch you specified in the GitHub Actions workflow.
+git add .
+git commit -m "Initial commit"
+git push origin main
+
